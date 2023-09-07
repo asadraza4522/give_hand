@@ -140,13 +140,6 @@ const ProductDetails = ({route, navigation}) => {
             product={product}
           />
         </View>
-        {/* <CommentBottomSheet
-          width={'100%'}
-          height={'70%'}
-          modalVisible={showCommentModal}
-          setModalVisibility={setShowCommentModal}>
-          <CommentView productID={product._id} navigation={navigation} />
-        </CommentBottomSheet> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

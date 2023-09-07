@@ -2,15 +2,15 @@ import React from 'react';
 import {SafeAreaView} from 'react-native';
 import CreateViewTabs from '../../../components/CreateViewTabs';
 import Theme from '../../../theme/theme';
-import CreateCat from './CreateCat';
-import ViewCat from './ViewCat';
+import CreateCard from './CreateCard';
+import ViewCard from './ViewCard';
 
-const ACategories = ({navigation}) => {
+const ACard = ({navigation}) => {
   const routeData = {
-    firstComp: ViewCat,
-    firstTitle: 'Categories',
-    secondComp: CreateCat,
-    secondTitle: 'Add Category',
+    firstComp: ViewCard,
+    firstTitle: 'Cards',
+    secondComp: CreateCard,
+    secondTitle: 'Add Card',
   };
 
   return (
@@ -20,4 +20,4 @@ const ACategories = ({navigation}) => {
   );
 };
 
-export default ACategories;
+export default ACard;

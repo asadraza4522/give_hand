@@ -16,6 +16,7 @@ import {LoginApi} from '../../utilies/api/apiController';
 import {get_data, save_data} from '../../utilies/AsyncStorage/AsyncStorage';
 import Toast from 'react-native-simple-toast';
 import {
+  getCardsUser,
   getProductsCart,
   getProductsCategories,
   getProductsUser,
@@ -53,6 +54,7 @@ const Login = ({navigation}) => {
             true
           ) {
             getProductsUser(navigation, 1, '', dispatch);
+            getCardsUser(navigation, 1, '', dispatch);
             getProductsCategories(navigation, 1, 10, dispatch);
             setTimeout(() => {
               Toast.show('Login successfully', Toast.SHORT);

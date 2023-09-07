@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   Text,
   SafeAreaView,
@@ -9,24 +9,11 @@ import {
   Pressable,
 } from 'react-native';
 import Theme from '../../theme/theme';
-import HomeHeader from '../../components/HomeHeader';
-import SliderCarousal from '../../components/Carousal';
-import MenuHeader from '../../utilies/MenuHeader';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import IconText from '../../components/IconText';
 import StatusBarDTWC from '../../components/StatusBarDTWC';
 import {useSelector, useDispatch} from 'react-redux';
-import {
-  getChatRoomList,
-  getLikeProducts,
-  getProductsUser,
-} from '../../utilies/api/apiCalls';
+import {getChatRoomList} from '../../utilies/api/apiCalls';
 import Loader from '../../components/Loader';
 import Color from '../../theme/color';
-import {createStripeAccount} from '../../utilies/api/apiController';
 import ChatRoomItem from '../../components/chats/ChatRoomItem';
 import RNVICustom from '../../utilies/RNVICustom';
 import {get_data} from '../../utilies/AsyncStorage/AsyncStorage';

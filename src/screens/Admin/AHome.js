@@ -53,6 +53,15 @@ const AHome = ({navigation, route}) => {
       },
       path: 'AProducts',
     },
+    {
+      title: 'Cards',
+      icon: {
+        name: 'charity',
+        lib: 'MaterialCommunityIcons',
+        color: Color.ThemeColorBlueDark,
+      },
+      path: 'ACard',
+    },
   ]);
 
   const [statisticsdata, setstatisticsdata] = useState([

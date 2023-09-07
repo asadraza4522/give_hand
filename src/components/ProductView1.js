@@ -25,6 +25,7 @@ const ProductView1 = ({
   addToCart,
   updateQtyFun,
   qtyLoading,
+  type = 1,
 }) => {
   const [loading, setLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -34,7 +35,9 @@ const ProductView1 = ({
   let dispatch = useDispatch();
 
   const moveToDetails = () => {
-    navigation.navigate('ProductDetails', {data: data, index: index});
+    type == 1
+      ? navigation.navigate('ProductDetails', {data: data, index: index})
+      : navigation.navigate('CardDetails', {data: data, index: index});
   };
 
   const getPercentage = (price, discount) => {
@@ -138,14 +141,16 @@ const ProductView1 = ({
             </Text>
           )}
         </Text>
-        <PlusMinusQty
-          loading={loading}
-          cartAdd
-          product={data}
-          updateQty={updateQtyFun ? updateQtyFun : handleUpdateQty}
-          addToCart={addToCart ? addToCart : handleAddToCart}
-          style={styles.margin5}
-        />
+        {type == 1 && (
+          <PlusMinusQty
+            loading={loading}
+            cartAdd
+            product={data}
+            updateQty={updateQtyFun ? updateQtyFun : handleUpdateQty}
+            addToCart={addToCart ? addToCart : handleAddToCart}
+            style={styles.margin5}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );

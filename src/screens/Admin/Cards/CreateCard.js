@@ -1,46 +1,33 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-  FlatList,
-} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, FlatList} from 'react-native';
 import Theme from '../../../theme/theme';
 import {FormInput} from '../../../components/FormInput';
 import Color from '../../../theme/color';
 import {Btn} from '../../../components/btn';
-import {
-  editAdminProductApi,
-  getProductDetail,
-} from '../../../utilies/api/apiController';
 import Toast from 'react-native-simple-toast';
 import Loader from '../../../components/Loader';
-import ViewCat from '../Categories/ViewCat';
-import ViewBrand from '../Brands/ViewBrand';
 import BottomSheet from '../../../components/BottomSheet';
+import ViewBrand from '../Brands/ViewBrand';
+import ViewCat from '../Categories/ViewCat';
+import {createAdminProduct} from '../../../utilies/api/apiController';
 import {createPostValidation} from '../../../utilies/adminValidations';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Badge from '../../../components/Badge';
 import ImgSmView from '../../../components/ImgSmView';
 
-const EditProduct = ({navigation, route}) => {
-  let {productID} = route.params;
-
+const CreateCard = ({navigation}) => {
   const [productName, setproductName] = useState('');
   const [brandName, setbrandName] = useState('');
   const [categories, setCategories] = useState([]);
   const [categoriesNames, setcategoriesNames] = useState([]);
-  const [price, setPrice] = useState('');
-  const [discountPrice, setdiscountPrice] = useState('');
   const [searchTags, setSearchTags] = useState('');
   const [searchTagList, setSearchTagList] = useState([]);
+  const [price, setPrice] = useState('');
+  const [discountPrice, setdiscountPrice] = useState('');
   const [errortext, setErrortext] = useState('');
   const [loading, setLoading] = useState(false);
   const [searchModalVisible, setsearchModalVisible] = useState(false);
   const [image, setImage] = useState('');
-  const [prevImage, setPrevImage] = useState('');
   const [working, selectWorking] = useState('');
 
   const launchGallery = async () => {
@@ -56,106 +43,6 @@ const EditProduct = ({navigation, route}) => {
       setImage('');
     } else {
       setImage(result);
-    }
-  };
-
-  const getData = async () => {
-    setLoading(true);
-    let resp = await getProductDetail(navigation, productID);
-    if (resp?.data?.error === false) {
-      setproductName(resp?.data?.data?.name);
-      // setbrandName(resp?.data?.data?.brand)
-      setCategories(resp?.data?.data?.categories);
-      setcategoriesNames(resp?.data?.data?.categories?.map(i => i.name));
-      resp?.data?.data?.tags &&
-        setSearchTagList(resp?.data?.data?.tags.split(','));
-      setPrice(resp?.data?.data?.price.toString());
-      setdiscountPrice(resp?.data?.data?.discountPrice.toString());
-      let img = (resp?.data?.data?.image && resp?.data?.data?.image) || '';
-      setImage(img);
-      setPrevImage(img);
-      setLoading(false);
-    } else {
-      Toast.show(
-        resp?.response?.data?.message
-          ? resp?.response?.data?.message
-          : resp.message
-          ? resp.message
-          : 'Something Went Wrong!',
-        Toast.SHORT,
-      );
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const submit = async () => {
-    let validate = createPostValidation({
-      productName,
-      categories,
-      price,
-      discountPrice,
-    });
-    if (validate.valid == false) {
-      setErrortext(validate.errors);
-    } else {
-      setErrortext('');
-      setLoading(true);
-
-      let choosedCategories = categories.map(i => i._id);
-      const newProduct = new FormData();
-
-      if (prevImage != '') {
-        if (image != prevImage) {
-          if (image == '') {
-            newProduct.append('image', '');
-          } else {
-            newProduct.append('image', {
-              uri: image?.assets[0].uri,
-              type: image?.assets[0].type,
-              name: image?.assets[0].fileName,
-            });
-          }
-          newProduct.append('prevImage', prevImage);
-        }
-      } else {
-        if (image != '') {
-          newProduct.append('image', {
-            uri: image?.assets[0].uri,
-            type: image?.assets[0].type,
-            name: image?.assets[0].fileName,
-          });
-        }
-      }
-
-      newProduct.append('_id', productID);
-      newProduct.append('name', productName.trim());
-      newProduct.append('brand', brandName._id);
-      newProduct.append('categories', JSON.stringify(choosedCategories));
-      newProduct.append('tags', searchTagList.toString());
-      newProduct.append('price', price);
-      newProduct.append('discountPrice', discountPrice);
-      newProduct.append('productType', 'product');
-
-      let resp = await editAdminProductApi(newProduct, navigation);
-      if (resp?.data?.error === false) {
-        Toast.show(`${productName} updated successfully`, Toast.SHORT);
-        setLoading(false);
-        navigation.goBack();
-      } else {
-        Toast.show(
-          resp?.response?.data?.message
-            ? resp?.response?.data?.message
-            : resp.message
-            ? resp.message
-            : 'Something Went Wrong!',
-          Toast.SHORT,
-        );
-        setLoading(false);
-      }
     }
   };
 
@@ -204,17 +91,81 @@ const EditProduct = ({navigation, route}) => {
     setcategoriesNames(arrayNames);
   };
 
+  const submit = async () => {
+    let validate = createPostValidation({
+      productName,
+      brandName,
+      categories,
+      price,
+      discountPrice,
+    });
+    if (validate.valid == false) {
+      setErrortext(validate.errors);
+    } else {
+      setErrortext('');
+      setLoading(true);
+
+      let choosedCategories = categories.map(i => i._id);
+
+      const newProduct = new FormData();
+
+      newProduct.append('name', productName);
+      newProduct.append('categories', JSON.stringify(choosedCategories));
+      newProduct.append('tags', searchTagList.toString());
+      newProduct.append('price', price);
+      newProduct.append('discountPrice', undefined);
+      newProduct.append('productType', 'card');
+
+      image != '' &&
+        newProduct.append('image', {
+          uri: image?.assets[0].uri,
+          type: image?.assets[0].type,
+          name: image?.assets[0].fileName,
+        });
+
+      let resp = await createAdminProduct(newProduct, navigation);
+      if (resp?.data?.error === false) {
+        Toast.show(`${resp?.data?.data?.name} added successfully`, Toast.SHORT);
+        clearInputs();
+        setLoading(false);
+      } else {
+        console.log(resp);
+        Toast.show(
+          resp?.response?.data?.message
+            ? resp?.response?.data?.message
+            : resp.message
+            ? resp.message
+            : 'Something Went Wrong!',
+          Toast.SHORT,
+        );
+        setLoading(false);
+      }
+    }
+  };
+
+  const clearInputs = () => {
+    setproductName('');
+    setbrandName('');
+    setCategories([]);
+    setcategoriesNames([]);
+    setSearchTags('');
+    setSearchTagList([]);
+    setPrice('');
+    setdiscountPrice('');
+    setImage('');
+  };
+
   return (
-    <SafeAreaView style={Theme.TabViewCreateInsideContainer}>
+    <View style={Theme.TabViewCreateInsideContainer}>
       <Loader animating={loading} />
-      <Text style={Theme.CreateViewHeading}>Edit Product Details</Text>
+      <Text style={Theme.CreateViewHeading}>Add New Card</Text>
       <ScrollView
         style={Theme.ScrollViewMargins}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
         <FormInput
-          Title={'Product Name'}
-          placeholder="Product Title"
+          Title={'Card Name'}
+          placeholder="Card Title"
           onChangeText={data => {
             setproductName(data);
             setErrortext('');
@@ -224,15 +175,15 @@ const EditProduct = ({navigation, route}) => {
           containerStyle={Theme.TextInputContainer}
           placeholderTextColor={Color.AuthInputsPlaceholder}
           leftIcon={{
-            family: 'FontAwesome',
-            name: 'product-hunt',
+            family: 'MaterialCommunityIcons',
+            name: 'charity',
             color: Color.neutralGray,
             size: 18,
           }}
           value={productName}
           error={
-            errortext === 'Please Enter Product Name'
-              ? 'Please Enter Product Name'
+            errortext === 'Please Enter Card Name'
+              ? 'Please Enter Card Name'
               : null
           }
         />
@@ -265,6 +216,7 @@ const EditProduct = ({navigation, route}) => {
         />
 
         <FlatList
+          keyboardShouldPersistTaps="handled"
           style={{marginHorizontal: '3%', marginBottom: -5}}
           data={categories}
           horizontal
@@ -280,7 +232,7 @@ const EditProduct = ({navigation, route}) => {
           onChangeText={data => {
             setSearchTags(data);
           }}
-          textInputContainerStyle={[Theme.InputView]}
+          textInputContainerStyle={Theme.InputView}
           style={Theme.TextInputStyle}
           containerStyle={Theme.TextInputContainer}
           placeholderTextColor={Color.AuthInputsPlaceholder}
@@ -309,7 +261,7 @@ const EditProduct = ({navigation, route}) => {
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({index, item}) => (
-            <Badge item={item} index={index} RemoveTag={RemoveTag} />
+            <Badge RemoveTag={RemoveTag} item={item} index={index} />
           )}
         />
 
@@ -341,35 +293,10 @@ const EditProduct = ({navigation, route}) => {
         />
 
         <FormInput
-          placeholder="Discounted Price"
-          onChangeText={data => {
-            setdiscountPrice(data);
-            setErrortext('');
-          }}
-          textInputContainerStyle={Theme.InputView}
-          style={Theme.TextInputStyle}
-          containerStyle={Theme.TextInputContainer}
-          placeholderTextColor={Color.AuthInputsPlaceholder}
-          leftIcon={{
-            family: 'Fontisto',
-            name: 'shopping-sale',
-            color: Color.neutralGray,
-            size: 18,
-          }}
-          keyboardType="number-pad"
-          value={discountPrice}
-          error={
-            errortext === 'Please Enter Valid Discount Price'
-              ? 'Please Enter Valid Discount Price'
-              : null
-          }
-        />
-
-        <FormInput
           Component={Text}
           placeholder="Upload Image"
           onPress={launchGallery}
-          textInputContainerStyle={[Theme.InputView]}
+          textInputContainerStyle={Theme.InputView}
           style={Theme.TextInputStyle}
           containerStyle={Theme.TextInputContainer}
           placeholderTextColor={Color.AuthInputsPlaceholder}
@@ -399,12 +326,14 @@ const EditProduct = ({navigation, route}) => {
         modalVisible={searchModalVisible}
         setModalVisibility={setsearchModalVisible}>
         {working != '' ? (
-          working == 'brand' ? null : (
+          working == 'brand' ? (
+            <ViewBrand getData={selectTheBrand} HideBackground={false} />
+          ) : (
             <ViewCat getData={selectTheCategorie} HideBackground={false} />
           )
         ) : null}
       </BottomSheet>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -413,7 +342,8 @@ const styles = StyleSheet.create({
     ...Theme.btnStyle,
     marginBottom: '4%',
     elevation: 5,
+    // , position: 'absolute', bottom: 20, width: '92%', alignSelf: 'center'
   },
 });
 
-export default EditProduct;
+export default CreateCard;

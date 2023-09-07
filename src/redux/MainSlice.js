@@ -6,6 +6,7 @@ export const mainSlice = createSlice({
     value: 0,
     screens: 's',
     homeProducts: '',
+    homeCard: '',
     likeProducts: [],
     productComments: [],
     chatRoomsList: [],
@@ -212,6 +213,81 @@ export const mainSlice = createSlice({
     setChatMessageList: (state, action) => {
       state.chatMessagesList = action.payload;
     },
+    clearHomeCard: (state, action) => {
+      state.homeCard = [];
+    },
+    cleanHomeCardQty: (state, action) => {
+      let allProducts = state.homeCard;
+
+      for (let index = 0; index < allProducts.docs.length; index++) {
+        allProducts.docs[index].cartQty = 0;
+      }
+
+      state.homeCard = allProducts;
+    },
+    setHomeCards: (state, action) => {
+      let prevData = state.homeCard;
+      let newData = action.payload;
+
+      for (let index = 0; index < newData.docs.length; index++) {
+        for (
+          let indexj = 0;
+          indexj < state?.cartList?.products?.length;
+          indexj++
+        ) {
+          if (
+            state.cartList.products[indexj].productID._id ==
+            newData.docs[index]._id
+          ) {
+            newData.docs[index].cartQty =
+              state.cartList.products[indexj].cartQty;
+            break;
+          }
+        }
+      }
+
+      let merge =
+        prevData?.docs?.length > 0
+          ? prevData?.docs?.concat(newData?.docs)
+          : newData?.docs;
+
+      newData.docs = merge;
+
+      state.homeCard = newData;
+    },
+
+    updateHomeCards: (state, action) => {
+      let {UProduct, index} = action.payload;
+
+      let cards = state.homeCard;
+
+      cards?.docs?.splice(index, 1, UProduct);
+
+      state.homeCard = cards;
+    },
+
+    updateCardsAllOver: (state, action) => {
+      let {p_id, q_ty} = action.payload;
+
+      if (q_ty === undefined) {
+        for (let index = 0; index < state.cartList.products.length; index++) {
+          if (state.cartList.products[index].productID._id == p_id) {
+            q_ty = state.cartList.products[index].cartQty;
+            break;
+          }
+        }
+      }
+
+      let products = state.homeCard;
+
+      for (let index = 0; index < products.docs.length; index++) {
+        if (products.docs[index]._id == p_id) {
+          products.docs[index].cartQty = q_ty;
+
+          break;
+        }
+      }
+    },
   },
 });
 
@@ -235,6 +311,11 @@ export const {
   setChatLoader,
   createChatRoomsListData,
   setChatMessageList,
+  clearHomeCard,
+  cleanHomeCardQty,
+  setHomeCards,
+  updateHomeCards,
+  updateCardsAllOver,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;

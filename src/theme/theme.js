@@ -463,6 +463,10 @@ const Theme = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  ProductView1LikeBtn: {
+    elevation: 5,
+    ...IOSShadow,
+  },
   TabsViewTitle: {
     fontFamily: 'Metropolis-Medium',
     fontSize: 16,

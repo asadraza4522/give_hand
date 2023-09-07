@@ -18,6 +18,14 @@ export const addToCartApi = async (user, navigation) => {
   });
   return data;
 };
+export const addCardToCartApi = async (user, navigation) => {
+  const data = await post_request({
+    target: '/api/cart/addProduct',
+    body: user,
+    navigation: navigation,
+  });
+  return data;
+};
 
 export const getUserCart = async (navigation, id) => {
   const data = await get_request({
@@ -347,7 +355,14 @@ export const getAdminProductsApi = async (
   const data = await get_request({
     target: `/api/product/viewProducts?page=${page}&search=${searchData}&category=${
       category || ''
-    }`,
+    }&productType=${'product'}`,
+    navigation: navigation,
+  });
+  return data;
+};
+export const getAdminCardApi = async (navigation, page, searchData) => {
+  const data = await get_request({
+    target: `/api/product/viewProducts?page=${page}&search=${searchData}&productType=${'card'}`,
     navigation: navigation,
   });
   return data;

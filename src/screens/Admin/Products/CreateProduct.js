@@ -114,6 +114,7 @@ const CreateProduct = ({navigation}) => {
       newProduct.append('tags', searchTagList.toString());
       newProduct.append('price', price);
       newProduct.append('discountPrice', discountPrice);
+      newProduct.append('productType', 'product');
 
       image != '' &&
         newProduct.append('image', {

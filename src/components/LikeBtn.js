@@ -24,7 +24,11 @@ const LikeBtn = ({
       {
         <TouchableOpacity
           activeOpacity={1}
-          style={[BtnSize && {flex: BtnSize}, style && style]}>
+          style={[
+            BtnSize && {flex: BtnSize},
+            style && style,
+            Theme.ProductView1LikeBtn,
+          ]}>
           <RNVICustom
             onPress={onBtnPress && onBtnPress.bind(this, product?._id)}
             Lib={'MaterialCommunityIcons'}

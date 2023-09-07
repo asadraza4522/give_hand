@@ -42,6 +42,10 @@ import StripeAccount from '../screens/Auth/StripeAccount';
 import AddNewChat from '../screens/Chats/AddNewChat';
 import ChatMessages from '../screens/Chats/ChatMessages';
 import CommentView from '../components/comment/CommentView';
+import ACard from '../screens/Admin/Cards/ACard';
+import EditCard from '../screens/Admin/Cards/EditCard';
+import CardDetails from '../screens/Cards/CardDetails';
+import CardListScreen from '../screens/Cards/CardListScreen';
 
 // Admin screen imports here //
 
@@ -115,6 +119,15 @@ const UserRoutes = () => {
         component={CardPayment}
       />
       <UserStack.Screen
+        options={{
+          headerTitleStyle: {...Theme.TabsViewTitle},
+          title: 'Card List',
+          headerBackTitle: 'Home',
+        }}
+        name="CardListScreen"
+        component={CardListScreen}
+      />
+      <UserStack.Screen
         options={{headerTitleStyle: {...Theme.TabsViewTitle}, title: 'Order'}}
         name="Orders"
         component={Orders}
@@ -134,6 +147,14 @@ const UserRoutes = () => {
         }}
         name="ProductDetails"
         component={ProductDetails}
+      />
+      <UserStack.Screen
+        options={{
+          headerTitleStyle: {...Theme.TabsViewTitle},
+          title: 'Card Details',
+        }}
+        name="CardDetails"
+        component={CardDetails}
       />
       <UserStack.Screen
         options={{
@@ -226,6 +247,11 @@ const AdminDrawer = () => {
         name="AProducts"
         component={AProducts}
       />
+      <Drawer.Screen
+        options={{headerTitle: 'Cards', drawerLabel: 'Cards'}}
+        name="ACard"
+        component={ACard}
+      />
     </Drawer.Navigator>
   );
 };
@@ -261,6 +287,11 @@ const AdminRoutes = () => {
         component={AProducts}
       />
       <AdminStack.Screen
+        options={{title: 'Cards'}}
+        name="ACard"
+        component={ACard}
+      />
+      <AdminStack.Screen
         options={{title: 'Edit Category'}}
         name="EditCat"
         component={EditCat}
@@ -269,6 +300,11 @@ const AdminRoutes = () => {
         options={{title: 'Edit Product'}}
         name="EditProduct"
         component={EditProduct}
+      />
+      <AdminStack.Screen
+        options={{title: 'Edit Card'}}
+        name="EditCard"
+        component={EditCard}
       />
       <AdminStack.Screen
         options={{title: 'Edit Brand'}}

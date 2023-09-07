@@ -15,6 +15,7 @@ import {
   createChatRoomsListData,
   setChatRoomList,
   setChatMessageList,
+  setHomeCards,
 } from '../../redux/MainSlice';
 import {get_data} from '../AsyncStorage/AsyncStorage';
 import {
@@ -35,6 +36,8 @@ import {
   createNewMessageApi,
   getMessagesList,
   getMessagesListApi,
+  getAdminCardApi,
+  addCardToCartApi,
 } from './apiController';
 
 export const saveFCMtoken = async (navigation, FCM) => {
@@ -102,6 +105,33 @@ export const getProductsUser = async (navigation, page, search, dispatch) => {
 
     if (response?.data?.error === false) {
       dispatch(setHomeProducts(response?.data?.data));
+    } else {
+      Toast.show(
+        resp?.response?.data?.message
+          ? resp?.response?.data?.message
+          : resp.message
+          ? resp.message
+          : 'Something Went Wrong!',
+        Toast.SHORT,
+      );
+    }
+  } catch (error) {
+    console.log(error, 'Error');
+  }
+
+  return true;
+};
+
+export const getCardsUser = async (navigation, page, search, dispatch) => {
+  try {
+    let response = await getAdminCardApi(
+      navigation,
+      page ? page : 1,
+      search ? search : '',
+    );
+
+    if (response?.data?.error === false) {
+      dispatch(setHomeCards(response?.data?.data));
     } else {
       Toast.show(
         resp?.response?.data?.message
@@ -188,6 +218,53 @@ export const addToCartHome = async (
   UProduct.cartQty = 1;
 
   let resp = await addToCartApi(body, navigation);
+  if (resp?.data?.error === false) {
+    index !== undefined && dispatch(updateHomeProducts({UProduct, index}));
+    getProductsCart(navigation, userID.id, dispatch);
+    dispatch(setHomeLoader(false));
+  } else {
+    if (resp?.data?.message === 'Product Already Exists!') {
+      return resp?.data?.message;
+    }
+
+    Toast.show(
+      resp?.data?.message
+        ? resp?.data?.message
+        : resp.message
+        ? resp.message
+        : 'Something Went Wrong!',
+      Toast.SHORT,
+    );
+    dispatch(setHomeLoader(false));
+  }
+};
+export const addCardToCartHome = async (
+  ProID,
+  data,
+  navigation,
+  dispatch,
+  index,
+) => {
+  dispatch(setHomeLoader(true));
+
+  let userID = await get_data('@userData');
+
+  let body = {
+    user: userID.id,
+    productID: ProID,
+    cardItem: {
+      productID: [data.productIDList],
+      title: data?.title,
+      descp: data.descp,
+      sendTo: data.sendToUserId,
+    },
+  };
+
+  let UProduct = Object.assign({}, data);
+
+  UProduct.cartQty = 1;
+
+  let resp = await addCardToCartApi(body, navigation);
   if (resp?.data?.error === false) {
     index !== undefined && dispatch(updateHomeProducts({UProduct, index}));
     getProductsCart(navigation, userID.id, dispatch);

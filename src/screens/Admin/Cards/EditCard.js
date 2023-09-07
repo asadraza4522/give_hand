@@ -25,7 +25,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import Badge from '../../../components/Badge';
 import ImgSmView from '../../../components/ImgSmView';
 
-const EditProduct = ({navigation, route}) => {
+const EditCard = ({navigation, route}) => {
   let {productID} = route.params;
 
   const [productName, setproductName] = useState('');
@@ -137,8 +137,8 @@ const EditProduct = ({navigation, route}) => {
       newProduct.append('categories', JSON.stringify(choosedCategories));
       newProduct.append('tags', searchTagList.toString());
       newProduct.append('price', price);
-      newProduct.append('discountPrice', discountPrice);
-      newProduct.append('productType', 'product');
+      newProduct.append('discountPrice', undefined);
+      newProduct.append('productType', 'card');
 
       let resp = await editAdminProductApi(newProduct, navigation);
       if (resp?.data?.error === false) {
@@ -341,31 +341,6 @@ const EditProduct = ({navigation, route}) => {
         />
 
         <FormInput
-          placeholder="Discounted Price"
-          onChangeText={data => {
-            setdiscountPrice(data);
-            setErrortext('');
-          }}
-          textInputContainerStyle={Theme.InputView}
-          style={Theme.TextInputStyle}
-          containerStyle={Theme.TextInputContainer}
-          placeholderTextColor={Color.AuthInputsPlaceholder}
-          leftIcon={{
-            family: 'Fontisto',
-            name: 'shopping-sale',
-            color: Color.neutralGray,
-            size: 18,
-          }}
-          keyboardType="number-pad"
-          value={discountPrice}
-          error={
-            errortext === 'Please Enter Valid Discount Price'
-              ? 'Please Enter Valid Discount Price'
-              : null
-          }
-        />
-
-        <FormInput
           Component={Text}
           placeholder="Upload Image"
           onPress={launchGallery}
@@ -416,4 +391,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditProduct;
+export default EditCard;

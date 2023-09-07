@@ -3,12 +3,12 @@ import {View, Text, Keyboard} from 'react-native';
 import Theme from '../../../theme/theme';
 import SearchAndList from '../../../components/SearchAndList';
 import {
-  getAdminProductsApi,
+  getAdminCardApi,
   delAdminProductsApi,
 } from '../../../utilies/api/apiController';
 import Toast from 'react-native-simple-toast';
 
-const ViewProduct = ({navigation}) => {
+const ViewCard = ({navigation}) => {
   const [allProducts, setallProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
@@ -21,7 +21,7 @@ const ViewProduct = ({navigation}) => {
     setSearchData('');
     setRefreshing(true);
 
-    let resp = await getAdminProductsApi(navigation, 1, '');
+    let resp = await getAdminCardApi(navigation, 1, '');
     if (resp?.data?.error === false) {
       console.log(JSON.stringify(resp.data), 'this is the response data');
       setallProducts([...resp.data.data.docs]);
@@ -46,7 +46,7 @@ const ViewProduct = ({navigation}) => {
 
       setRefreshing(true);
 
-      let resp = await getAdminProductsApi(navigation, page, searchData);
+      let resp = await getAdminCardApi(navigation, page, searchData);
       if (resp?.data?.error === false) {
         setallProducts([...previous_data, ...resp.data.data.docs]);
         setLastPage(resp.data.data.totalPages);
@@ -89,7 +89,7 @@ const ViewProduct = ({navigation}) => {
   };
 
   const setEditFun = (item, index) => {
-    navigation.navigate('EditProduct', {
+    navigation.navigate('EditCard', {
       productID: item._id,
       prevName: item.name,
     });
@@ -163,4 +163,4 @@ const ViewProduct = ({navigation}) => {
   );
 };
 
-export default ViewProduct;
+export default ViewCard;
