@@ -294,8 +294,12 @@ export const getFeedsListApi = async (navigation, page, searchData, limit) => {
 };
 
 export const createNewFeedApi = async (user, navigation) => {
+  console.log(
+    '🚀 ~ file: apiController.js:297 ~ createNewFeedApi ~ user:',
+    user,
+  );
   const data = await post_request({
-    target: '/api/feed/addFeed',
+    target: '/api/feed/addFeed/UploadVideo',
     body: user,
     navigation: navigation,
     formData: true,

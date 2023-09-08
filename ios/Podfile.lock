@@ -86,6 +86,7 @@ PODS:
   - libwebp/mux (1.2.4):
     - libwebp/demux
   - libwebp/webp (1.2.4)
+  - NextLevelSessionExporter (0.4.6)
   - OpenSSL-Universal (1.1.1100)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -338,6 +339,10 @@ PODS:
   - React-jsinspector (0.71.7)
   - React-logger (0.71.7):
     - glog
+  - react-native-compressor (1.7.2):
+    - NextLevelSessionExporter
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
   - react-native-geolocation-service (5.3.1):
     - React
   - react-native-image-picker (4.10.3):
@@ -353,6 +358,11 @@ PODS:
   - react-native-simple-toast (1.1.4):
     - React-Core
     - Toast (~> 4.0.0)
+  - react-native-video (5.2.1):
+    - React-Core
+    - react-native-video/Video (= 5.2.1)
+  - react-native-video/Video (5.2.1):
+    - React-Core
   - react-native-webview (12.0.2):
     - React-Core
   - React-perflogger (0.71.7)
@@ -541,11 +551,13 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-compressor (from `../node_modules/react-native-compressor`)
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
+  - react-native-video (from `../node_modules/react-native-video`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -585,6 +597,7 @@ SPEC REPOS:
     - fmt
     - libevent
     - libwebp
+    - NextLevelSessionExporter
     - OpenSSL-Universal
     - SDWebImage
     - SDWebImageWebPCoder
@@ -633,6 +646,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-compressor:
+    :path: "../node_modules/react-native-compressor"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
   react-native-image-picker:
@@ -643,6 +658,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-simple-toast:
     :path: "../node_modules/react-native-simple-toast"
+  react-native-video:
+    :path: "../node_modules/react-native-video"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-perflogger:
@@ -710,6 +727,7 @@ SPEC CHECKSUMS:
   hermes-engine: 4438d2b8bf8bebaba1b1ac0451160bab59e491f8
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: f62cb61d0a484ba548448a4bd52aabf150ff6eef
+  NextLevelSessionExporter: 4d8aa5e617f1c709724f2453efe5d4628480f65a
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: 5a4a30ac20c86eeadd6844a9328f78d4168cf9b2
@@ -725,11 +743,13 @@ SPEC CHECKSUMS:
   React-jsiexecutor: eaa5f71eb8f6861cf0e57f1a0f52aeb020d9e18e
   React-jsinspector: 9885f6f94d231b95a739ef7bb50536fb87ce7539
   React-logger: 3f8ebad1be1bf3299d1ab6d7f971802d7395c7ef
+  react-native-compressor: 69b2c0ce823649986e096fdf7baaf7e5f294e4b1
   react-native-geolocation-service: 608e1da71a1ac31b4de64d9ef2815f697978c55b
   react-native-image-picker: 60f4246eb5bb7187fc15638a8c1f13abd3820695
   react-native-pager-view: da490aa1f902c9a5aeecf0909cc975ad0e92e53e
   react-native-safe-area-context: f5549f36508b1b7497434baa0cd97d7e470920d4
   react-native-simple-toast: 8ee5d23f0b92b935ab7434cdb65159ce12dfb4b7
+  react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
   react-native-webview: 203b6a1c7507737f777c91d7e10c30e7e67c1a17
   React-perflogger: 2d505bbe298e3b7bacdd9e542b15535be07220f6
   React-RCTActionSheet: 0e96e4560bd733c9b37efbf68f5b1a47615892fb
