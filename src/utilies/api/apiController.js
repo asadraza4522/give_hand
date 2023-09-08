@@ -283,6 +283,16 @@ export const getAdminCategoriesApi = async (
   return data;
 };
 
+export const getFeedsListApi = async (navigation, page, searchData, limit) => {
+  const data = await get_request({
+    target: `/api/feed/viewFeeds?page=${page}&search=${searchData}&limit=${
+      limit || 10
+    }`,
+    navigation: navigation,
+  });
+  return data;
+};
+
 export const delAdminCategoriesApi = async (user, navigation) => {
   const data = await post_request({
     target: '/api/category/delete',

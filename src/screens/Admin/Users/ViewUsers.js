@@ -7,8 +7,9 @@ import {
   delAdminProductsApi,
 } from '../../../utilies/api/apiController';
 import Toast from 'react-native-simple-toast';
+import UserSearchAndList from '../../../components/UserSearchAndList';
 
-const ViewUsers = ({navigation}) => {
+const ViewUsers = ({navigation, HideBackground, hideControls, getData}) => {
   const [allUsers, setallUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
@@ -38,7 +39,7 @@ const ViewUsers = ({navigation}) => {
     setRefreshing(false);
   };
 
-  const getProductsList = async () => {
+  const getUsersList = async () => {
     if (page <= lastPage) {
       setRefreshing(true);
 
@@ -85,6 +86,8 @@ const ViewUsers = ({navigation}) => {
     // navigation.navigate('EditProduct', { productID: item._id, prevName: item.name })
   };
 
+  const onUserPress = (id, index, name) => {};
+
   const HandleSearch = event => {
     if (event == 'press') {
       Keyboard.dismiss();
@@ -108,7 +111,7 @@ const ViewUsers = ({navigation}) => {
 
   useEffect(() => {
     if (page <= 2) {
-      getProductsList();
+      getUsersList();
     }
   }, [page, searchData]);
 
@@ -126,21 +129,36 @@ const ViewUsers = ({navigation}) => {
   };
 
   return (
-    <View style={Theme.TabViewCreateInsideContainer}>
-      <Text style={Theme.CreateViewHeading}>Users List</Text>
-      <SearchAndList
-        searchData={searchData}
-        setSearchData={setSearchData}
-        search={Search}
-        setEditFun={setEditFun}
-        deleteListItem={deleteListItem}
-        navigation={navigation}
-        onRefresh={refreshing}
-        refreshData={getRefreshData}
-        loadMore={getProductsList}
-        data={allUsers}
-      />
-    </View>
+    <>
+      {HideBackground !== undefined ? (
+        <UserSearchAndList
+          searchData={searchData}
+          setSearchData={setSearchData}
+          search={Search}
+          handleFunction={getData ? getData : null}
+          navigation={navigation}
+          onRefresh={refreshing}
+          refreshData={getRefreshData}
+          loadMore={getUsersList}
+          data={allUsers.filter(item => item.type === 'user')}
+        />
+      ) : (
+        <View style={Theme.TabViewCreateInsideContainer}>
+          <Text style={Theme.CreateViewHeading}>Users List</Text>
+          <UserSearchAndList
+            searchData={searchData}
+            setSearchData={setSearchData}
+            search={Search}
+            handleFunction={onUserPress}
+            navigation={navigation}
+            onRefresh={refreshing}
+            refreshData={getRefreshData}
+            loadMore={getUsersList}
+            data={allUsers.filter(item => item.type === 'user')}
+          />
+        </View>
+      )}
+    </>
   );
 };
 

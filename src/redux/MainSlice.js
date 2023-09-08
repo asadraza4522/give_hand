@@ -15,6 +15,7 @@ export const mainSlice = createSlice({
     cartList: '',
     homeLoader: false,
     chatLoader: false,
+    feedsList: [],
   },
   reducers: {
     setProductCategories: (state, action) => {
@@ -288,6 +289,19 @@ export const mainSlice = createSlice({
         }
       }
     },
+    setFeedsList: (state, action) => {
+      let prevData = state.feedsList;
+      let newData = action.payload;
+
+      let merge =
+        prevData?.docs?.length > 0
+          ? prevData?.docs?.concat(newData?.docs)
+          : newData?.docs;
+
+      newData.docs = merge;
+
+      state.feedsList = newData;
+    },
   },
 });
 
@@ -316,6 +330,7 @@ export const {
   setHomeCards,
   updateHomeCards,
   updateCardsAllOver,
+  setFeedsList,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;

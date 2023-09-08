@@ -8,7 +8,7 @@ import {
 } from '../../../utilies/api/apiController';
 import Toast from 'react-native-simple-toast';
 
-const ViewProduct = ({navigation}) => {
+const ViewProduct = ({navigation, HideBackground, hideControls, getData}) => {
   const [allProducts, setallProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
@@ -145,21 +145,40 @@ const ViewProduct = ({navigation}) => {
   };
 
   return (
-    <View style={Theme.TabViewCreateInsideContainer}>
-      <Text style={Theme.CreateViewHeading}>Products List</Text>
-      <SearchAndList
-        searchData={searchData}
-        setSearchData={setSearchData}
-        search={Search}
-        setEditFun={setEditFun}
-        deleteListItem={deleteListItem}
-        navigation={navigation}
-        onRefresh={refreshing}
-        refreshData={getRefreshData}
-        loadMore={getProductsList}
-        data={allProducts}
-      />
-    </View>
+    <>
+      {HideBackground !== undefined ? (
+        <SearchAndList
+          searchData={searchData}
+          setSearchData={setSearchData}
+          search={Search}
+          hideControls
+          handleFunction={getData ? getData : null}
+          setEditFun={setEditFun}
+          deleteListItem={deleteListItem}
+          navigation={navigation}
+          onRefresh={refreshing}
+          refreshData={getRefreshData}
+          loadMore={getProductsList}
+          data={allProducts}
+        />
+      ) : (
+        <View style={Theme.TabViewCreateInsideContainer}>
+          <Text style={Theme.CreateViewHeading}>Products List</Text>
+          <SearchAndList
+            searchData={searchData}
+            setSearchData={setSearchData}
+            search={Search}
+            setEditFun={setEditFun}
+            deleteListItem={deleteListItem}
+            navigation={navigation}
+            onRefresh={refreshing}
+            refreshData={getRefreshData}
+            loadMore={getProductsList}
+            data={allProducts}
+          />
+        </View>
+      )}
+    </>
   );
 };
 

@@ -23,7 +23,7 @@ import {
 import {get_data} from '../../utilies/AsyncStorage/AsyncStorage';
 import {getProductsCart, getProductsUser} from '../../utilies/api/apiCalls';
 import {useDispatch} from 'react-redux';
-import {clearHomeProduct} from '../../redux/MainSlice';
+import {clearHomeCard, clearHomeProduct} from '../../redux/MainSlice';
 import RNVICustom from '../../utilies/RNVICustom';
 import {hasLocationPermission} from '../../utilies/Location';
 import Geolocation from 'react-native-geolocation-service';
@@ -126,6 +126,7 @@ const ShippingDetails = ({navigation}) => {
       if (resp?.data?.error === false) {
         console.log(resp.data, 'adadanidajidjaidjaid');
         dispatch(clearHomeProduct());
+        dispatch(clearHomeCard());
         getProductsCart(navigation, user_data.id, dispatch);
         if (getProductsUser(navigation, 1, '', dispatch)) {
           setLoading(false);
@@ -140,6 +141,7 @@ const ShippingDetails = ({navigation}) => {
         }
       } else {
         dispatch(clearHomeProduct());
+        dispatch(clearHomeCard());
         getProductsCart(navigation, user_data.id, dispatch);
         setLoading(false);
         Toast.show(

@@ -129,7 +129,7 @@ const ProductView1 = ({
         </Text>
         <Text style={{...styles.MainPrice, height: null}}>
           Rs. {data.discountPrice ? data.discountPrice : data?.price}{' '}
-          {data?.discountPrice !== undefined && (
+          {data?.discountPrice !== undefined && data?.discountPrice !== 0 && (
             <Text>
               <Text style={{...Theme.ProductView1OrignalPrice}}>
                 {data?.price}

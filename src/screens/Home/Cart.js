@@ -19,13 +19,14 @@ import {fonts} from '../../theme/fonts';
 import AlertBox from '../../components/AlertBox';
 import {deleteUserCart, getProductsCart} from '../../utilies/api/apiCalls';
 import {get_data} from '../../utilies/AsyncStorage/AsyncStorage';
-import {cleanHomeProductQty} from '../../redux/MainSlice';
+import {cleanHomeCardQty, cleanHomeProductQty} from '../../redux/MainSlice';
 import Loader from '../../components/Loader';
 
 const Cart = ({navigation}) => {
   const dispatch = useDispatch();
 
   const cartProducts = useSelector(state => state.main.cartList);
+  console.log('🚀 ~ file: Cart.js:29 ~ Cart ~ cartProducts:', cartProducts);
 
   const [loading, setLoading] = useState(false);
   const [deleteAlert, setDeleteAlert] = useState(false);
@@ -41,6 +42,8 @@ const Cart = ({navigation}) => {
       navigation={navigation}
       setLoading={setLoading}
       item={item}
+      index={index}
+      cartList={cartProducts}
     />
   );
 
@@ -54,6 +57,7 @@ const Cart = ({navigation}) => {
       if (await deleteUserCart(navigation)) {
         if (await getProductsCart(navigation, user.id, dispatch)) {
           dispatch(cleanHomeProductQty());
+          dispatch(cleanHomeCardQty());
           setLoading(false);
         }
       }

@@ -64,6 +64,23 @@ export default function HomeTabs() {
         component={Chat}
       />
       <Tab.Screen
+        name="Feeds"
+        options={{
+          title: 'Feeds',
+          tabBarIcon: tabOpt => {
+            return (
+              <RNVICustom
+                Ccolor={tabOpt.focused ? Color.ThemeColor : Color.neutralGray}
+                Lib={'MaterialIcons'}
+                Cname={'video-collection'}
+                Csize={24}
+              />
+            );
+          },
+        }}
+        component={Chat}
+      />
+      <Tab.Screen
         name="Cart"
         options={{
           title: 'Your Cart',

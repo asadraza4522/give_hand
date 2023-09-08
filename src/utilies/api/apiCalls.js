@@ -16,6 +16,8 @@ import {
   setChatRoomList,
   setChatMessageList,
   setHomeCards,
+  updateHomeCards,
+  setFeedsList,
 } from '../../redux/MainSlice';
 import {get_data} from '../AsyncStorage/AsyncStorage';
 import {
@@ -253,7 +255,7 @@ export const addCardToCartHome = async (
     user: userID.id,
     productID: ProID,
     cardItem: {
-      productID: [data.productIDList],
+      productID: data.productIDList,
       title: data?.title,
       descp: data.descp,
       sendTo: data.sendToUserId,
@@ -265,8 +267,9 @@ export const addCardToCartHome = async (
   UProduct.cartQty = 1;
 
   let resp = await addCardToCartApi(body, navigation);
+  console.log('🚀 ~ file: apiCalls.js:268 ~ resp:', resp);
   if (resp?.data?.error === false) {
-    index !== undefined && dispatch(updateHomeProducts({UProduct, index}));
+    index !== undefined && dispatch(updateHomeCards({UProduct, index}));
     getProductsCart(navigation, userID.id, dispatch);
     dispatch(setHomeLoader(false));
   } else {
@@ -283,6 +286,26 @@ export const addCardToCartHome = async (
       Toast.SHORT,
     );
     dispatch(setHomeLoader(false));
+  }
+};
+export const getFeeds = async (navigation, page, limit, dispatch) => {
+  try {
+    let response = await getFeedsListApi(navigation, page, '', limit);
+
+    if (response?.data?.error === false) {
+      dispatch(setFeedsList(response?.data?.data));
+    } else {
+      Toast.show(
+        resp?.response?.data?.message
+          ? resp?.response?.data?.message
+          : resp.message
+          ? resp.message
+          : 'Something Went Wrong!',
+        Toast.SHORT,
+      );
+    }
+  } catch (error) {
+    console.log(error, 'Error');
   }
 };
 

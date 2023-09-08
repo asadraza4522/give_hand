@@ -10,6 +10,7 @@ import {
   Platform,
   Dimensions,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import Theme from '../../theme/theme';
 import Color from '../../theme/color';
@@ -28,6 +29,10 @@ import CommentBottomSheet from '../../components/comment/CommentBottomSheet';
 import CommentView from '../../components/comment/CommentView';
 import {Btn} from '../../components/btn';
 import {FormInput} from '../../components/FormInput';
+import Toast from 'react-native-simple-toast';
+import ViewUsers from '../Admin/Users/ViewUsers';
+import Badge from '../../components/Badge';
+import ViewProduct from '../Admin/Products/ViewProduct';
 
 const CardDetails = ({route, navigation}) => {
   const CartProduct = useSelector(state => state.main.cartList);
@@ -36,8 +41,13 @@ const CardDetails = ({route, navigation}) => {
 
   const [product, setProduct] = useState('');
   const [cardTitle, setCardTitle] = useState('');
+  const [cardDescp, setCardDescp] = useState('');
+  const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]);
   const [errortext, setErrortext] = useState('');
   const [showCommentModal, setShowCommentModal] = useState(false);
+  const [searchModalVisible, setsearchModalVisible] = useState(false);
+  const [working, setWorking] = useState('');
 
   useEffect(() => {
     let Product = Object.assign({}, data);
@@ -55,20 +65,59 @@ const CardDetails = ({route, navigation}) => {
   }, []);
 
   let dispatch = useDispatch();
+  const selectUser = (index, item) => {
+    console.log('🚀 ~ file: CardDetails.js:67 ~ selectUser ~ item:', item);
+    let result = user ? user._id == item._id : false;
 
-  const getPercentage = (price, discount) => {
-    let percentage = 0;
-
-    if (price != 0 && (discount !== undefined || discount != 0)) {
-      percentage = (((price - discount) / price) * 100).toFixed(0);
-
-      return percentage + '% Off';
+    if (!result) {
+      setUser(item);
+    } else {
+      Toast.show(`User ${item.name} Already selected`, Toast.SHORT);
     }
+
+    setsearchModalVisible(false);
+  };
+  const RemoveProduct = index => {
+    let array = [...products];
+    array.splice(index, 1);
+    setProducts(array);
+  };
+
+  const selectProduct = (index, item) => {
+    console.log('🚀 ~ file: CardDetails.js:82 ~ selectProduct ~ item:', item);
+    let productsTemp = [...products];
+
+    let result = productsTemp.findIndex(val => val._id == item._id);
+
+    if (result == -1) {
+      setProducts([...products, item]);
+    } else {
+      Toast.show(`Product ${item.name} Already selected`, Toast.LONG);
+    }
+    setsearchModalVisible(false);
   };
 
   const handleAddToCart = ProID => {
+    let productIDList =
+      products?.length > 0
+        ? products.map(item => {
+            return item._id;
+          })
+        : [];
+    console.log(
+      '🚀 ~ file: CardDetails.js:102 ~ handleAddToCart ~ productIDList:',
+      productIDList,
+    );
     let tempProduct = Object.assign({}, product);
-    addCardToCartHome(ProID, product, navigation, dispatch, index);
+    tempProduct.title = cardTitle;
+    tempProduct.descp = cardDescp;
+    tempProduct.productIDList = productIDList;
+    tempProduct.sendToUserId = user ? user._id : null;
+    console.log(
+      '🚀 ~ file: CardDetails.js:102 ~ handleAddToCart ~ tempProduct:',
+      tempProduct,
+    );
+    addCardToCartHome(ProID, tempProduct, navigation, dispatch, index);
     tempProduct.cartQty = 1;
     setProduct(tempProduct);
 
@@ -92,6 +141,10 @@ const CardDetails = ({route, navigation}) => {
   const handleOnCommentPress = () => {
     setShowCommentModal(!showCommentModal);
     navigation.navigate('CommentView', {productID: product._id});
+  };
+
+  const RemoveUser = index => {
+    setUser();
   };
 
   return (
@@ -159,32 +212,69 @@ const CardDetails = ({route, navigation}) => {
                   : null
               }
             />
-            {/* <FormInput
-              Component={Text}
-              onPress={() => {
-                setsearchModalVisible(true);
+            <FormInput
+              Title={'Description :'}
+              placeholder="Enter description to show on card"
+              onChangeText={val => {
+                setCardDescp(val);
                 setErrortext('');
-                working !== 'category' && selectWorking('category');
               }}
-              Title={'Categories'}
-              placeholder="Select Categories"
               textInputContainerStyle={Theme.InputView}
               style={Theme.TextInputStyle}
               containerStyle={Theme.TextInputContainer}
               placeholderTextColor={Color.AuthInputsPlaceholder}
               leftIcon={{
-                family: 'MaterialIcons',
-                name: 'texture',
+                family: 'MaterialCommunityIcons',
+                name: 'charity',
                 color: Color.neutralGray,
                 size: 18,
               }}
-              value={categoriesNames}
+              value={cardDescp}
               error={
-                errortext === 'Please Choose atleast one category!'
-                  ? 'Please Choose atleast one category!'
+                errortext === 'Please Enter Card Name'
+                  ? 'Please Enter Card Name'
                   : null
               }
-            /> */}
+            />
+            {user && (
+              <View
+                style={{
+                  marginHorizontal: '3%',
+                  flex: 1,
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                }}>
+                <Text style={Theme.FormInputTitle}>
+                  {'Send donation to User : '}
+                </Text>
+                <Badge RemoveTag={RemoveUser} item={user?.name} index={0} />
+              </View>
+            )}
+            {products?.length > 0 && (
+              <View
+                style={{
+                  marginHorizontal: '3%',
+                  marginTop: '3%',
+                }}>
+                <Text style={Theme.FormInputTitle}>
+                  {'Send products to User : '}
+                </Text>
+              </View>
+            )}
+            <FlatList
+              keyboardShouldPersistTaps="handled"
+              style={{marginHorizontal: '3%'}}
+              data={products}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              renderItem={({item}) => (
+                <Badge
+                  RemoveTag={RemoveProduct}
+                  item={item?.name}
+                  index={index}
+                />
+              )}
+            />
             <View
               style={{
                 flexDirection: 'row',
@@ -192,27 +282,42 @@ const CardDetails = ({route, navigation}) => {
                 justifyContent: 'center',
               }}>
               <Btn
-                onPress={() => {}}
+                onPress={() => {
+                  setsearchModalVisible(true);
+                  setWorking('product');
+                }}
                 text="Add Product"
                 containerStyle={[styles.btnMainStyle]}
                 textStyle={styles.btnTxtStyle}
               />
               <Btn
-                onPress={() => {}}
+                onPress={() => {
+                  setsearchModalVisible(true);
+                  setWorking('user');
+                }}
                 text="Add User"
                 containerStyle={[styles.btnMainStyle]}
                 textStyle={styles.btnTxtStyle}
               />
             </View>
-            <PlusMinusQty
-              updateQty={handleUpdateQty}
-              addToCart={handleAddToCart}
-              style={[
-                Theme.AddCartProDetails,
-                {marginTop: '5%', paddingVertical: 10, paddingHorizontal: 10},
-              ]}
-              product={product}
+            <Btn
+              onPress={() => handleAddToCart(product?._id)}
+              text={product?.cartQty == 1 ? 'Added' : 'Add To Cart'}
+              containerStyle={[styles.btnMainStyle, {marginHorizontal: '6%'}]}
+              textStyle={styles.btnTxtStyle}
             />
+            <BottomSheet
+              width={'90%'}
+              height={'80%'}
+              middle
+              modalVisible={searchModalVisible}
+              setModalVisibility={setsearchModalVisible}>
+              {working === 'user' ? (
+                <ViewUsers getData={selectUser} HideBackground={false} />
+              ) : (
+                <ViewProduct getData={selectProduct} HideBackground={false} />
+              )}
+            </BottomSheet>
           </View>
         </KeyboardAvoidingView>
       </ScrollView>

@@ -13,7 +13,11 @@ import {useDispatch} from 'react-redux';
 import {Btn} from '../../components/btn';
 import IconTwoText from '../../components/IconTwoText';
 import StatusBarDTWC from '../../components/StatusBarDTWC';
-import {clearHomeProduct, setHomeProducts} from '../../redux/MainSlice';
+import {
+  clearHomeCard,
+  clearHomeProduct,
+  setHomeProducts,
+} from '../../redux/MainSlice';
 import Color from '../../theme/color';
 import Theme from '../../theme/theme';
 import {Logout} from '../../utilies/AsyncStorage/AsyncStorage';
@@ -49,6 +53,7 @@ const Account = ({navigation}) => {
         onPress={async () => {
           await Logout(navigation, dispatch);
           dispatch(clearHomeProduct([]));
+          dispatch(clearHomeCard([]));
         }}
         containerStyle={{
           ...Theme.btnStyle,

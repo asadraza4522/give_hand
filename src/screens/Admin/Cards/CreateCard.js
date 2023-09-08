@@ -113,7 +113,7 @@ const CreateCard = ({navigation}) => {
       newProduct.append('categories', JSON.stringify(choosedCategories));
       newProduct.append('tags', searchTagList.toString());
       newProduct.append('price', price);
-      newProduct.append('discountPrice', undefined);
+      newProduct.append('discountPrice', 0);
       newProduct.append('productType', 'card');
 
       image != '' &&

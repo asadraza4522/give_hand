@@ -20,7 +20,9 @@ const PlusMinusQty = ({
 }) => {
   return (
     <>
-      {product?.cartQty && product?.cartQty != 0 ? (
+      {product?.cartQty &&
+      product?.cartQty != 0 &&
+      product?.productType != 'card' ? (
         <TouchableOpacity
           activeOpacity={1}
           style={[
