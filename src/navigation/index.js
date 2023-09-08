@@ -46,6 +46,7 @@ import ACard from '../screens/Admin/Cards/ACard';
 import EditCard from '../screens/Admin/Cards/EditCard';
 import CardDetails from '../screens/Cards/CardDetails';
 import CardListScreen from '../screens/Cards/CardListScreen';
+import AddNewFeed from '../screens/Feeds/AddNewFeed';
 
 // Admin screen imports here //
 
@@ -173,6 +174,15 @@ const UserRoutes = () => {
         }}
         name="AddNewChatRoom"
         component={AddNewChat}
+      />
+      <UserStack.Screen
+        options={{
+          headerTitleStyle: {...Theme.TabsViewTitle},
+          title: 'Add Your Feed',
+          headerBackTitle: 'Feeds',
+        }}
+        name="AddNewFeed"
+        component={AddNewFeed}
       />
       <UserStack.Screen
         options={{

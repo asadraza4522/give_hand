@@ -285,10 +285,20 @@ export const getAdminCategoriesApi = async (
 
 export const getFeedsListApi = async (navigation, page, searchData, limit) => {
   const data = await get_request({
-    target: `/api/feed/viewFeeds?page=${page}&search=${searchData}&limit=${
+    target: `/api/feed/viewFeed?page=${page}&search=${searchData}&limit=${
       limit || 10
     }`,
     navigation: navigation,
+  });
+  return data;
+};
+
+export const createNewFeedApi = async (user, navigation) => {
+  const data = await post_request({
+    target: '/api/feed/addFeed',
+    body: user,
+    navigation: navigation,
+    formData: true,
   });
   return data;
 };

@@ -9,6 +9,7 @@ import Cart from '../screens/Home/Cart';
 import Account from '../screens/Home/Account';
 import Chat from '../screens/Home/Chat';
 import Explore from '../screens/Home/Explore';
+import Feeds from '../screens/Home/Feeds';
 
 const Tab = createBottomTabNavigator();
 
@@ -78,7 +79,7 @@ export default function HomeTabs() {
             );
           },
         }}
-        component={Chat}
+        component={Feeds}
       />
       <Tab.Screen
         name="Cart"

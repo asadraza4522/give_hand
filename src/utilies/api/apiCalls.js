@@ -40,6 +40,7 @@ import {
   getMessagesListApi,
   getAdminCardApi,
   addCardToCartApi,
+  getFeedsListApi,
 } from './apiController';
 
 export const saveFCMtoken = async (navigation, FCM) => {
