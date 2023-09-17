@@ -7,7 +7,7 @@ import RNVICustom from '../utilies/RNVICustom';
 const IconTwoText = ({navigation, item, ...props}) => {
   return (
     <TouchableOpacity {...props} style={Theme.iconTwoTextmainView}>
-      <View style={{flexDirection: 'row'}}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <RNVICustom
           Ccolor={Color.ThemeColor}
           Csize={22}

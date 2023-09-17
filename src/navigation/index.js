@@ -47,6 +47,8 @@ import EditCard from '../screens/Admin/Cards/EditCard';
 import CardDetails from '../screens/Cards/CardDetails';
 import CardListScreen from '../screens/Cards/CardListScreen';
 import AddNewFeed from '../screens/Feeds/AddNewFeed';
+import FavListScreen from '../screens/Details/FavListScreen';
+import CameraScreen from '../screens/Feeds/CameraScreen';
 
 // Admin screen imports here //
 
@@ -123,10 +125,28 @@ const UserRoutes = () => {
         options={{
           headerTitleStyle: {...Theme.TabsViewTitle},
           title: 'Card List',
-          headerBackTitle: 'Home',
+          headerBackTitle: '',
         }}
         name="CardListScreen"
         component={CardListScreen}
+      />
+      <UserStack.Screen
+        options={{
+          headerTitleStyle: {...Theme.TabsViewTitle},
+          title: 'Favorite List',
+          headerBackTitle: '',
+        }}
+        name="FavListScreen"
+        component={FavListScreen}
+      />
+      <UserStack.Screen
+        options={{
+          headerTitleStyle: {...Theme.TabsViewTitle},
+          title: 'Camera Screen',
+          headerBackTitle: '',
+        }}
+        name="CameraScreen"
+        component={CameraScreen}
       />
       <UserStack.Screen
         options={{headerTitleStyle: {...Theme.TabsViewTitle}, title: 'Order'}}

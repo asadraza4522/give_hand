@@ -7,12 +7,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
-  Pressable,
   ScrollView,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Toast from 'react-native-simple-toast';
-import {useDispatch} from 'react-redux';
 import {FormInput} from '../../components/FormInput';
 import Loader from '../../components/Loader';
 import StatusBarDTWC from '../../components/StatusBarDTWC';
@@ -27,6 +25,7 @@ import {WP} from '../../utilies/responsives/responsive';
 import Video from 'react-native-video';
 import {get_data} from '../../utilies/AsyncStorage/AsyncStorage';
 import {Video as CompressVideo} from 'react-native-compressor';
+import BottomSheet from '../../components/BottomSheet';
 
 const AddVideoButton = ({onPress}) => {
   return (
@@ -46,14 +45,15 @@ const AddVideoButton = ({onPress}) => {
 };
 
 const AddNewFeed = ({navigation, route}) => {
+  let cameraVideo = route?.params?.video;
   const [descp, setDescp] = useState('');
   const [errortext, setErrorText] = useState('');
   const [uploadingVideo, setUploadingVideo] = useState(false);
-  const dispatch = useDispatch();
   const [videoUri, setVideoUri] = useState(null);
   const [videoResult, setVideoResult] = useState(null);
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const launchGallery = async () => {
     try {
@@ -134,6 +134,13 @@ const AddNewFeed = ({navigation, route}) => {
     }
   };
 
+  const getMediaFileName = path => {
+    return path.substring(path.lastIndexOf('/') + 1);
+  };
+  const getMediaExtension = filename => {
+    return filename.split('.')[1];
+  };
+
   const compressFileVideo = async file => {
     console.log(
       '🚀 ~ file: AddNewFeed.js:133 ~ compressFileVideo ~ file:',
@@ -142,8 +149,10 @@ const AddNewFeed = ({navigation, route}) => {
     try {
       let _result;
       let uri = file?.uri ? file.uri : file;
-      let fileName = file?.fileName;
-      let mimeType = file.type;
+      let fileName = file?.fileName ? file?.fileName : getMediaFileName(uri);
+      let mimeType = file?.type
+        ? file.type
+        : `video/${getMediaExtension(fileName)}`;
       _result = await CompressVideo.compress(uri, {
         compressionMethod: 'auto',
       });
@@ -158,6 +167,28 @@ const AddNewFeed = ({navigation, route}) => {
       return null;
     }
   };
+  const handleAddVideoModal = () => {
+    setModalVisible(true);
+  };
+  const handleOnModalClose = val => {
+    setModalVisible(val);
+  };
+  const handleOnOptionsClick = type => {
+    setModalVisible(false);
+    if (type === 1) {
+      setTimeout(() => {
+        launchGallery();
+      }, 500);
+    } else {
+      navigation.navigate('CameraScreen');
+    }
+  };
+  useEffect(() => {
+    if (cameraVideo) {
+      setVideoUri(cameraVideo);
+      setVideoResult(cameraVideo);
+    }
+  }, [cameraVideo]);
 
   return (
     <SafeAreaView style={Theme.container}>
@@ -169,11 +200,11 @@ const AddNewFeed = ({navigation, route}) => {
         keyboardVerticalOffset={120}>
         <ScrollView style={{flex: 1}}>
           <View style={{flex: 1}}>
-            <View style={{height: '80%'}}>
+            <View style={{flex: 1, height: 250}}>
               <CharityIcon />
             </View>
             {videoUri ? (
-              <View style={{alignItems: 'center'}}>
+              <View style={{alignItems: 'center', flex: 1}}>
                 <View style={styles.videoPlayButton}>
                   <RNVICustom
                     onPress={playVideo}
@@ -205,48 +236,65 @@ const AddNewFeed = ({navigation, route}) => {
                 />
               </View>
             ) : (
-              <View style={{alignItems: 'center'}}>
-                <AddVideoButton onPress={launchGallery} />
+              <View style={{alignItems: 'center', flex: 1}}>
+                <AddVideoButton onPress={handleAddVideoModal} />
                 <Text style={styles.emptyTextStyle}>Add Your Video</Text>
               </View>
             )}
-            <FormInput
-              Title={'Description :'}
-              placeholder="Enter description"
-              onChangeText={val => {
-                setDescp(val);
-                setErrorText('');
-              }}
-              textInputContainerStyle={Theme.InputView}
-              style={Theme.TextInputStyle}
-              containerStyle={Theme.TextInputContainer}
-              placeholderTextColor={Color.AuthInputsPlaceholder}
-              leftIcon={{
-                family: 'MaterialIcons',
-                name: 'texture',
-                color: Color.neutralGray,
-                size: 18,
-              }}
-              value={descp}
-              error={
-                errortext === 'Please Enter Description'
-                  ? 'Please Enter Description'
-                  : null
-              }
-            />
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Btn
-                onPress={() => handleSend()}
-                text="Upload Feed"
-                containerStyle={[styles.btnMainStyle]}
-                textStyle={styles.btnTxtStyle}
+            <View style={{flex: 1}}>
+              <FormInput
+                Title={'Description :'}
+                placeholder="Enter description"
+                onChangeText={val => {
+                  setDescp(val);
+                  setErrorText('');
+                }}
+                textInputContainerStyle={Theme.InputView}
+                style={Theme.TextInputStyle}
+                containerStyle={Theme.TextInputContainer}
+                placeholderTextColor={Color.AuthInputsPlaceholder}
+                leftIcon={{
+                  family: 'MaterialIcons',
+                  name: 'texture',
+                  color: Color.neutralGray,
+                  size: 18,
+                }}
+                value={descp}
+                error={
+                  errortext === 'Please Enter Description'
+                    ? 'Please Enter Description'
+                    : null
+                }
               />
+              <View style={styles.btnViewStyle}>
+                <Btn
+                  onPress={() => handleSend()}
+                  text="Upload Feed"
+                  containerStyle={[styles.btnMainStyle]}
+                  textStyle={styles.btnTxtStyle}
+                />
+              </View>
             </View>
+            <BottomSheet
+              width={'100%'}
+              height={'18%'}
+              modalVisible={modalVisible}
+              setModalVisibility={handleOnModalClose}>
+              <View style={styles.btnViewStyle}>
+                <Btn
+                  onPress={() => handleOnOptionsClick(1)}
+                  text="From Gallery"
+                  containerStyle={[styles.btnMainStyle]}
+                  textStyle={styles.btnTxtStyle}
+                />
+                <Btn
+                  onPress={() => handleOnOptionsClick(2)}
+                  text="Upload Camera"
+                  containerStyle={[styles.btnMainStyle]}
+                  textStyle={styles.btnTxtStyle}
+                />
+              </View>
+            </BottomSheet>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -308,6 +356,11 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
+  },
+  btnViewStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

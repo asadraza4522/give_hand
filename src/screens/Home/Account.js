@@ -28,6 +28,18 @@ const Account = ({navigation}) => {
 
   const [listData, setListData] = useState([
     {title: 'Profile', icon: 'user', Lib: 'AntDesign', Path: 'UserProfile'},
+    {
+      title: 'Favorite',
+      icon: 'heart-circle-outline',
+      Lib: 'MaterialCommunityIcons',
+      Path: 'FavListScreen',
+    },
+    {
+      title: 'Donation Cards',
+      icon: 'charity',
+      Lib: 'MaterialCommunityIcons',
+      Path: 'CardListScreen',
+    },
     {title: 'Order', icon: 'shopping-bag', Lib: 'Entypo', Path: 'Orders'},
   ]);
 

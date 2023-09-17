@@ -73,7 +73,9 @@ const ProductView1 = ({
   const onHandleLikeClick = async ProID => {
     if (index !== undefined) {
       if (isLiked) {
-        let findValue = likeProductsList.find(item => item.productID === ProID);
+        let findValue = likeProductsList.find(
+          item => item.productID?._id === ProID,
+        );
         const results = await unLikeProducts(
           findValue,
           navigation,
@@ -82,6 +84,10 @@ const ProductView1 = ({
         );
       } else {
         const results = await likeProducts(ProID, navigation, dispatch, index);
+        console.log(
+          '🚀 ~ file: ProductView1.js:85 ~ onHandleLikeClick ~ results:',
+          results,
+        );
       }
     }
   };
@@ -90,7 +96,7 @@ const ProductView1 = ({
     console.log('likeProducts', likeProductsList);
     if (likeProductsList && likeProductsList.length > 0) {
       let findValue = likeProductsList.findIndex(
-        item => item.productID === data._id,
+        item => item.productID?._id === data._id,
       );
       setIsLiked(findValue > -1 ? true : false);
     } else {

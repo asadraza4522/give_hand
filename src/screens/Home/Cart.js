@@ -6,6 +6,8 @@ import {
   FlatList,
   StyleSheet,
   Image,
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import Theme from '../../theme/theme';
 import ProductViewCart from '../../components/ProductViewCart';
@@ -17,10 +19,16 @@ import BorderBox from '../../components/BorderBox';
 import RowText from '../../utilies/RowText';
 import {fonts} from '../../theme/fonts';
 import AlertBox from '../../components/AlertBox';
-import {deleteUserCart, getProductsCart} from '../../utilies/api/apiCalls';
+import {
+  deleteUserCart,
+  getProductsCart,
+  updateDonation,
+} from '../../utilies/api/apiCalls';
 import {get_data} from '../../utilies/AsyncStorage/AsyncStorage';
 import {cleanHomeCardQty, cleanHomeProductQty} from '../../redux/MainSlice';
 import Loader from '../../components/Loader';
+import {DonationList} from '../../utilies/Constants';
+import {WP} from '../../utilies/responsives/responsive';
 
 const Cart = ({navigation}) => {
   const dispatch = useDispatch();
@@ -29,6 +37,7 @@ const Cart = ({navigation}) => {
   console.log('🚀 ~ file: Cart.js:29 ~ Cart ~ cartProducts:', cartProducts);
 
   const [loading, setLoading] = useState(false);
+  const [selectedDonation, setSelectedDonation] = useState(null);
   const [deleteAlert, setDeleteAlert] = useState(false);
 
   let billDetails = {
@@ -83,6 +92,32 @@ const Cart = ({navigation}) => {
     });
   }, [navigation, cartProducts]);
 
+  const handleOnDonationPress = async item => {
+    console.log('🚀 ~ file: Cart.js:92 ~ handleOnDonationPress ~ item:', item);
+    if (selectedDonation && item.id === selectedDonation?.id) {
+      setSelectedDonation(null);
+      await updateDonation(0, navigation, dispatch, setLoading);
+    } else {
+      setSelectedDonation(item);
+      await updateDonation(item?.amount, navigation, dispatch, setLoading);
+    }
+  };
+  const setDonationAmount = value => {
+    const item = DonationList.find(val => val.amount === value);
+    console.log('🚀 ~ file: Cart.js:107 ~ setDonationAmount ~ item:', item);
+    setSelectedDonation(item);
+  };
+
+  useEffect(() => {
+    if (
+      cartProducts?.products !== undefined &&
+      cartProducts?.products?.length !== 0 &&
+      cartProducts?.donationAmount
+    ) {
+      setDonationAmount(cartProducts?.donationAmount);
+    }
+  }, [cartProducts]);
+
   return (
     <SafeAreaView style={Theme.container}>
       <StatusBarDTWC />
@@ -104,8 +139,48 @@ const Cart = ({navigation}) => {
           />
         </View>
       )}
-
+      {cartProducts?.products?.length !== 0 && cartProducts?.products && (
+        <View style={Theme.GeneralBorder}>
+          <RowText first={'Add Donation'} />
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={DonationList}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={[
+                  styles.donationItem,
+                  {
+                    backgroundColor:
+                      selectedDonation?.id === item.id
+                        ? Color.ThemeColor
+                        : 'transparent',
+                  },
+                ]}
+                key={item.id}
+                onPress={() => handleOnDonationPress(item)}>
+                <Text
+                  style={{
+                    color:
+                      selectedDonation?.id === item.id
+                        ? Color.white
+                        : Color.black,
+                  }}>
+                  {item.amount}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
       <BorderBox>
+        {selectedDonation && (
+          <RowText
+            first={'Added Donation Amount'}
+            second={selectedDonation?.amount}
+          />
+        )}
         <RowText first={billDetails?.title} second={billDetails?.amt} />
       </BorderBox>
 
@@ -140,6 +215,16 @@ const Cart = ({navigation}) => {
 const styles = StyleSheet.create({
   btnMainStyle: {...Theme.btnStyle, marginTop: '2%', marginBottom: '4%'},
   btnTxtStyle: {...Theme.btnTextstyle, paddingVertical: 10},
+  donationItem: {
+    padding: WP(2),
+    width: WP(15),
+    alignItems: 'center',
+    borderRadius: 10,
+    marginHorizontal: WP(2),
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: Color.ThemeColor,
+  },
 });
 
 export default Cart;

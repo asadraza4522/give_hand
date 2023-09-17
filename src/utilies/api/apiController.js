@@ -43,6 +43,14 @@ export const updateCartQty = async (user, navigation) => {
   });
   return data;
 };
+export const updateCartDonation = async (user, navigation) => {
+  const data = await post_request({
+    target: '/api/cart/updateDonation',
+    body: user,
+    navigation: navigation,
+  });
+  return data;
+};
 
 export const creteOrderApi = async (user, navigation) => {
   const data = await post_request({

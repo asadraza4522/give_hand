@@ -18,6 +18,7 @@ import {
   setHomeCards,
   updateHomeCards,
   setFeedsList,
+  updateCartByDonation,
 } from '../../redux/MainSlice';
 import {get_data} from '../AsyncStorage/AsyncStorage';
 import {
@@ -41,6 +42,7 @@ import {
   getAdminCardApi,
   addCardToCartApi,
   getFeedsListApi,
+  updateCartDonation,
 } from './apiController';
 
 export const saveFCMtoken = async (navigation, FCM) => {
@@ -353,6 +355,41 @@ export const updateQty = async (
     return false;
   }
 };
+export const updateDonation = async (
+  donation,
+  navigation,
+  dispatch,
+  setLoading,
+) => {
+  // dispatch(setHomeLoader(true))
+  setLoading && setLoading(true);
+
+  let userID = await get_data('@userData');
+
+  let body = {
+    user: userID.id,
+    donationAmount: donation,
+  };
+
+  let resp = await updateCartDonation(body, navigation);
+  console.log('🚀 ~ file: apiCalls.js:375 ~ resp:', resp?.data);
+  if (resp?.data?.error === false) {
+    dispatch(updateCartByDonation({donation: donation}));
+    setLoading && setLoading(false);
+    return true;
+  } else {
+    Toast.show(
+      resp?.data?.message
+        ? resp?.data?.message
+        : resp.message
+        ? resp.message
+        : 'Something Went Wrong!',
+      Toast.SHORT,
+    );
+    setLoading && setLoading(false);
+    return false;
+  }
+};
 
 export const likeProducts = async (ProID, navigation, dispatch, index) => {
   dispatch(setHomeLoader(true));
@@ -366,6 +403,10 @@ export const likeProducts = async (ProID, navigation, dispatch, index) => {
 
   let resp = await likeProductApi(body, navigation);
   if (resp?.data?.error === false) {
+    console.log(
+      '🚀 ~ file: apiCalls.js:368 ~ likeProducts ~ resp:',
+      resp?.data,
+    );
     index !== undefined && dispatch(likeProductList({body, index}));
     getLikeProducts(navigation, userID.id, dispatch);
     dispatch(setHomeLoader(false));
@@ -420,7 +461,6 @@ export const getLikeProducts = async (navigation, id, dispatch) => {
     let userID = await get_data('@userData');
     let searchId = id ? id : userID.id;
     let response = await getLikeProductsApi(navigation, searchId);
-
     if (response?.data?.error === false) {
       console.log('getLikeProductsApi response', JSON.stringify(response.data));
       dispatch(setLikeProductList(response?.data?.data));

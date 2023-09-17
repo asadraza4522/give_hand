@@ -149,6 +149,20 @@ export const mainSlice = createSlice({
       }
       state.cartList = tempCart;
     },
+    updateCartByDonation: (state, action) => {
+      let {donation} = action.payload;
+
+      let tempCart = state.cartList;
+      if (donation != 0) {
+        tempCart.amount = tempCart.amount + donation;
+        tempCart.donationAmount = donation;
+      } else {
+        tempCart.amount = tempCart.amount - tempCart.donationAmount;
+        tempCart.donationAmount = null;
+      }
+      console.log('🚀 ~ file: MainSlice.js:160 ~ tempCart:', tempCart);
+      state.cartList = tempCart;
+    },
     likeProductList: (state, action) => {
       let {body} = action.payload;
 
@@ -331,6 +345,7 @@ export const {
   updateHomeCards,
   updateCardsAllOver,
   setFeedsList,
+  updateCartByDonation,
 } = mainSlice.actions;
 
 export default mainSlice.reducer;
